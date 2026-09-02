@@ -1,16 +1,23 @@
+import { AdSlot } from "@/lib/mock-ad-slots";
 import type { HTMLAttributes } from "react";
+import Badge from "./badge";
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
+  adSlot: AdSlot;
 }
 
-const Card = ({ children, className, ...props }: CardProps) => {
+const Card = ({ className, adSlot, ...props }: CardProps) => {
+  const badgeText = adSlot.status === "winning" ? `Revenue: $${adSlot.revenue.toFixed(2)}` : "No Fill";
+  const badge = <Badge intent={adSlot.status} text={badgeText} />;
   return (
     <div
-      className={`p-4 rounded-lg bg-amber-50 border-2 border-amber-200 hover:shadow-lg text-blue-500 ${className || ""}`}
-      {...props}
+      className={`p-4 rounded-lg bg-amber-50 border-2 border-amber-200 hover:shadow-lg text-blue-500 ${className || ""}`} {...props}
     >
-      <div>{children}</div>
+      <div className="flex flex-col @sm:flex-row @sm:items-center @sm:justify-between gap-2">
+        <p>{adSlot.name}</p>
+        {badge}
+      </div>
+      <p><span>Size:</span>{adSlot.size}</p>
     </div>
   );
 };

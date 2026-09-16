@@ -7,7 +7,8 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const Card = ({ className, adSlot, ...props }: CardProps) => {
-  const badgeText = adSlot.status === "winning" ? `Revenue: $${adSlot.revenue.toFixed(2)}` : "No Fill";
+  const badgeText = adSlot.status === "winning" ? `Revenue: $${adSlot.revenue.toFixed(2)}` :
+    adSlot.status === 'error' ? 'Error' : "No Fill";
   const badge = <Badge intent={adSlot.status} text={badgeText} />;
   return (
     <div

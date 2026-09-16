@@ -12,6 +12,8 @@ const badgeStyles = cva("inline-block px-2 py-1 font-semibold rounded-full text-
     intent: {
       winning: "text-white bg-green-500 dark:bg-green-600",
       nofill: "text-gray-800 bg-gray-200 dark:bg-gray-700 dark:text-gray-200",
+      error: "bg-red-500 text-white dark:bg-red-600",
+      pending: "bg-orange-500 text-white dark:bg-orange-600",
     } as Record<AdSlotStatus, string>
   },
   defaultVariants: {

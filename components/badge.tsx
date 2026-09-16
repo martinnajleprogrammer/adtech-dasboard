@@ -10,8 +10,8 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 const badgeStyles = cva("inline-block px-2 py-1 font-semibold rounded-full text-xs", {
   variants: {
     intent: {
-      winning: "text-white bg-green-500",
-      nofill: "text-gray-800 bg-gray-200",
+      winning: "text-white bg-green-500 dark:bg-green-600",
+      nofill: "text-gray-800 bg-gray-200 dark:bg-gray-700 dark:text-gray-200",
     } as Record<AdSlotStatus, string>
   },
   defaultVariants: {

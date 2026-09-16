@@ -11,13 +11,14 @@ const Card = ({ className, adSlot, ...props }: CardProps) => {
   const badge = <Badge intent={adSlot.status} text={badgeText} />;
   return (
     <div
-      className={`p-4 rounded-lg bg-amber-50 border-2 border-amber-200 hover:shadow-lg text-blue-500 ${className || ""}`} {...props}
+      className={`p-4 rounded-lg bg-amber-50 dark:bg-amber-950 border-2 border-amber-200 dark:border-amber-800 ${className || ""}`}
+      {...props}
     >
       <div className="flex flex-col @sm:flex-row @sm:items-center @sm:justify-between gap-2">
-        <p>{adSlot.name}</p>
+        <p className="font-semibold text-sm text-gray-500 dark:text-gray-400">{adSlot.name}</p>
         {badge}
       </div>
-      <p><span>Size:</span>{adSlot.size}</p>
+      <p className=" text-gray-700  dark:text-gray-300"><span className="pr-2">Size:</span>{adSlot.size}</p>
     </div>
   );
 };

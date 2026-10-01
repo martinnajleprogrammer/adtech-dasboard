@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { generateBidResponses, AUCTION_TIMEOUT_MS } from '../../../lib/mock-bidders';
 import { randomUUID } from "crypto";
-type AuctionRequest = { adslotId: string, floorPrice: number };
+export type AuctionRequest = { adslotId: string, floorPrice: number };
+
+type AuctionResultBase = { adslotId: string; auctionId: string };
+export type AuctionResult =
+  | (AuctionResultBase & { status: 'error' })
+  | (AuctionResultBase & { status: 'nofill' })
+  | (AuctionResultBase & { status: 'winning'; bidId: string; cpm: number; currency: string });
 
 
 const AUCTION_ERROR_RATE = 0.05; // 5% chance the mock auction engine "crashes" for this slot
@@ -18,7 +24,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Malformed request" }, { status: 400 });
     }
     
-    const results = auctions.map((auction: AuctionRequest) => { 
+    const results: AuctionResult[] = auctions.map((auction: AuctionRequest): AuctionResult => { 
       
       const { floorPrice, adslotId } = auction;
       const auctionId = randomUUID();

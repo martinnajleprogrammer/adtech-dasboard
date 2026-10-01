@@ -1,13 +1,14 @@
 import { AdSlot } from "@/lib/mock-ad-slots";
 import type { HTMLAttributes } from "react";
 import Badge from "./badge";
+import { AuctionResult } from "@/app/api/auctions/route";
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  adSlot: AdSlot;
+  adSlot: AdSlot & AuctionResult;
 }
 
 const Card = ({ className, adSlot, ...props }: CardProps) => {
-  const badgeText = adSlot.status === "winning" ? `Revenue: $${adSlot.revenue.toFixed(2)}` :
+  const badgeText = adSlot.status === "winning" ? `Revenue: $${adSlot.cpm.toFixed(2)}` :
     adSlot.status === 'error' ? 'Error' : "No Fill";
   const badge = <Badge intent={adSlot.status} text={badgeText} />;
   return (

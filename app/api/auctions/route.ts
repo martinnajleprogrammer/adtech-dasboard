@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   try {
 
     const body = await req.json(); // Read incoming 
-
+    
     const { auctions } = body;
 
     if (!auctions || auctions.length <= 0) {
@@ -25,7 +25,6 @@ export async function POST(req: NextRequest) {
     }
     
     const results: AuctionResult[] = auctions.map((auction: AuctionRequest): AuctionResult => { 
-      
       const { floorPrice, adslotId } = auction;
       const auctionId = randomUUID();
 

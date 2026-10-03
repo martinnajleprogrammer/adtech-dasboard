@@ -3,30 +3,35 @@
 import AdSlotContainer from "@/components/ad-slot-container";
 import { mockAdSlots } from "@/lib/mock-ad-slots";
 import useFilter, { type FilterType } from "@/app/hooks/useFilter";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useAuctions from "./hooks/useAuctions";
 
 const TIMEOUT_AUCTION = 5000; // 5 seconds
 
 export default function Home() {
   const [filter, setFilter] = useState<FilterType>("all");
-  const { addAuction, latestResults, error, lastSuccessAt } = useAuctions(TIMEOUT_AUCTION);
+  const { addAuction, latestResults, error, lastSuccessAt, revenueTotal } = useAuctions(TIMEOUT_AUCTION);
+
+  // IN DEV only once the auctions is loaded
+  const loadedRef = useRef(false);
 
   useEffect(() => {
-    mockAdSlots.forEach((adSlot) => addAuction({ adslotId: adSlot.id, floorPrice: adSlot.floorPrice }));
-  }, [addAuction])
+    if (!loadedRef.current) {
+      loadedRef.current = true;
+      mockAdSlots.forEach((adSlot) => {
+        addAuction({ adslotId: adSlot.id, floorPrice: adSlot.floorPrice });
+      });
+    }
+  }, [addAuction]);
 
   const filteredAdSlots = useFilter(mockAdSlots, filter);
-  // Derived from real auction results, not the static mock — only "winning" entries carry a cpm.
-  const totalRevenueToday = latestResults.reduce((total, result) => {
-    return result.status === 'winning' ? total + result.cpm : total;
-  }, 0);
+
 
   return (
     <>
       <header className="flex p-2 border-2 border-amber-500 dark:border-amber-700 justify-between items-center">
         <h1 className="text-2xl font-bold">AdTech Publisher Dashboard</h1>
-        <div>Latest Revenue:${totalRevenueToday.toFixed(2)}</div>
+        <div>Latest Revenue:${revenueTotal.toFixed(2)}</div>
       </header >
 
       {error && (

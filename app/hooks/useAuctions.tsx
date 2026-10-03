@@ -7,6 +7,11 @@ const useAuctions = (timeout: number) => {
   const [auctions, setAuctions] = useState<AuctionRequest[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [lastSuccessAt, setLastSuccessAt] = useState<Date | null>(null);
+  const [revenueTotal, setRevenueTotal] = useState(0);
+
+  const increaseRevenueTotal = (result: AuctionResult) => {
+    setRevenueTotal(prev => prev + (result.status === 'winning' && result.cpm || 0));
+  };
 
   const auctionsRef = useRef<AuctionRequest[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -43,6 +48,8 @@ const useAuctions = (timeout: number) => {
     }
   }, []);
 
+
+
   useEffect(() => {
     auctionsRef.current = auctions;
   }, [auctions]);
@@ -51,6 +58,7 @@ const useAuctions = (timeout: number) => {
     const update = async () => {
       const res = await sendAuctions();
       if (res) {
+        res.forEach(val => increaseRevenueTotal(val));
         setResults(res);
         setAuctions([]); // only clear the queue once the server actually processed it
       }
@@ -73,6 +81,7 @@ const useAuctions = (timeout: number) => {
     cancelAuctions,
     error,
     lastSuccessAt,
+    revenueTotal
   }
 };
 export default useAuctions;

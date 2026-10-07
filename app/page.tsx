@@ -13,8 +13,7 @@ export default function Home() {
   const [filter, setFilter] = useState<FilterType>("all");
   const { addAuction, latestResults, error, lastSuccessAt, revenueTotal } = useAuctions(TIMEOUT_AUCTION);
 
-  // IN DEV only once the auctions is loaded
-  const loadedRef = useRef(false);
+ß  const loadedRef = useRef(false);
 
   useEffect(() => {
     if (!loadedRef.current) {
@@ -32,7 +31,7 @@ export default function Home() {
     <>
       <header className="flex p-2 border-2 border-amber-500 dark:border-amber-700 justify-between items-center">
         <h1 className="text-2xl font-bold">AdTech Publisher Dashboard</h1>
-        <div>Latest Revenue:${revenueTotal.toFixed(2)}</div>
+        <div>Revenue Total:${revenueTotal.toFixed(2)}</div>
       </header >
       {/* <TypeAhead limit={10} url="/api/search" /> */}
 

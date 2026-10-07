@@ -2,7 +2,7 @@
 
 A publisher-side dashboard that simulates header-bidding auctions for ad slots and shows their outcome and revenue in real time. Built as a practice project to apply modern Next.js, Tailwind and frontend system design on a domain I know from production AdTech work (Prebid.js, header bidding).
 
-**Live demo:** _add Vercel URL here_
+**Live demo:** ![Vercel app](https://adtech-dasboard.vercel.app/)
 
 ![Dashboard screenshot](./docs/screenshot.png)
 

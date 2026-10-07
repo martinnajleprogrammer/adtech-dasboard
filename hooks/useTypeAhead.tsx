@@ -3,12 +3,12 @@ import useDebounce from "./useDebounce";
 
 const DELAY = 250;
 
-type TypeaheadResponse<T> = {
+type TypeAheadResponse<T> = {
   results: T[];
   total: number;
 };
 
-type TypeaheadState<T> =
+export type TypeAheadState<T> =
   | { status: 'idle' }
   | { status: 'loading'; query: string }
   | { status: 'results'; query: string; items: T[]; total: number }
@@ -19,11 +19,14 @@ const MIN_CHARS = 2;
 
 const useTypeAhead = (url: string, limit: number) => {
 
-  const [state, setState] = useState<TypeaheadState<string>>({ status: "idle" })
+  const [state, setState] = useState<TypeAheadState<string>>({ status: "idle" })
   const [query, setQuery] = useState<string>("");
+  const [isOpen, setIsOpen] = useState(false);
+
   const debouncedQuery = useDebounce(query, DELAY);
-  const activeIndex = 0;
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
+  const selectedItem = useRef<string | null>(null);
 
   const handleQueryChange = (value: string) => {
     setQuery(value);
@@ -32,7 +35,52 @@ const useTypeAhead = (url: string, limit: number) => {
       controllerRef.current?.abort();
       setState({ status: 'idle' });
     }
+    selectedItem.current = null;
+
   };
+
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (state.status !== 'results') return;
+    if (e.key === 'ArrowDown') {
+
+      e.preventDefault();
+      setIsOpen(true);
+      if (activeIndex !== null) {
+        setActiveIndex((activeIndex + 1) % state.items.length);
+      } else setActiveIndex(0)
+
+    } else if (e.key === 'ArrowUp') {
+
+      e.preventDefault();
+      setIsOpen(true);
+      if (activeIndex !== null) {
+        setActiveIndex((activeIndex - 1 + state.items.length) % state.items.length);
+      } else setActiveIndex(0)
+
+    } else if (e.key === 'Enter') {
+
+      if (activeIndex === null) return;
+      select(state.items[activeIndex]);
+
+    } else if (e.key === 'Escape') {
+
+      setIsOpen(false);
+      setActiveIndex(null);
+
+    }
+  }
+
+
+  const select = (item: string | null) => {
+    const normalizedItem = item?.trim().toLowerCase();
+    if (normalizedItem !== undefined) {
+      handleQueryChange(normalizedItem);
+    }
+    selectedItem.current = normalizedItem ?? null;
+
+    setState({ status: 'idle' });
+  }
 
   useEffect(() => {
     const normalized = debouncedQuery.trim().toLowerCase();
@@ -56,6 +104,8 @@ const useTypeAhead = (url: string, limit: number) => {
         if (data.results.length <= 0) {
           setState({ status: "empty", query: normalized });
         } else {
+          setActiveIndex(null);
+          setIsOpen(true);
           setState({ status: "results", query: normalized, items: data.results, total: data.total });
         }
       } catch (error: unknown) {
@@ -68,6 +118,9 @@ const useTypeAhead = (url: string, limit: number) => {
         return null;
       }
     };
+    if (selectedItem.current && selectedItem.current === normalized) {
+      return;
+    };
     search();
     return () => controller.abort();
 
@@ -76,7 +129,7 @@ const useTypeAhead = (url: string, limit: number) => {
 
 
 
-  return { state, setQuery: handleQueryChange }
+  return { state, setQuery: handleQueryChange, query, select, activeIndex, onKeyDown, isOpen }
 };
 
 export default useTypeAhead;

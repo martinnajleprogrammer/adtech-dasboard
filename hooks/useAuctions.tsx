@@ -1,4 +1,4 @@
-import type { AuctionRequest, AuctionResult } from "../api/auctions/route";
+import type { AuctionRequest, AuctionResult } from "@/app/api/auctions/route";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const useAuctions = (timeout: number) => {

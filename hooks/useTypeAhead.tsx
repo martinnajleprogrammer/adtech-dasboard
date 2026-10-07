@@ -44,7 +44,29 @@ const useTypeAhead = (url: string, limit: number) => {
 
     const search = async () => {
       setState({ status: 'loading', query: normalized });
-      fetch(`${url}?q=${encodeURIComponent(normalized)}&limit=${limit}`, { signal: controller.signal });
+      try {
+        const res = await fetch(`${url}?q=${encodeURIComponent(normalized)}&limit=${limit}`, { signal: controller.signal });
+        const data = await res.json();
+
+        if (!res.ok || !data.results) {
+          const msg = data?.error ?? `Request failed with status ${res.status}`;
+          setState({ status: 'error', query: normalized, message: msg });
+          return null;
+        }
+        if (data.results.length <= 0) {
+          setState({ status: "empty", query: normalized });
+        } else {
+          setState({ status: "results", query: normalized, items: data.results, total: data.total });
+        }
+      } catch (error: unknown) {
+        if (error instanceof Error && error.name === 'AbortError') return;
+        setState({
+          status: 'error',
+          query: normalized,
+          message: 'Unknown error contacting /api/search'
+        });
+        return null;
+      }
     };
     search();
     return () => controller.abort();
@@ -54,7 +76,7 @@ const useTypeAhead = (url: string, limit: number) => {
 
 
 
-  return {}
+  return { state, setQuery: handleQueryChange }
 };
 
 export default useTypeAhead;

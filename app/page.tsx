@@ -2,9 +2,10 @@
 
 import AdSlotContainer from "@/components/ad-slot-container";
 import { mockAdSlots } from "@/lib/mock-ad-slots";
-import useFilter, { type FilterType } from "@/app/hooks/useFilter";
+import useFilter, { type FilterType } from "@/hooks/useFilter";
 import { useEffect, useRef, useState } from "react";
-import useAuctions from "./hooks/useAuctions";
+import useAuctions from "@/hooks/useAuctions";
+import TypeAhead from "@/components/typeahead";
 
 const TIMEOUT_AUCTION = 5000; // 5 seconds
 
@@ -33,6 +34,7 @@ export default function Home() {
         <h1 className="text-2xl font-bold">AdTech Publisher Dashboard</h1>
         <div>Latest Revenue:${revenueTotal.toFixed(2)}</div>
       </header >
+      <TypeAhead limit={10} url="/api/search" />
 
       {error && (
         <div className="p-2 text-sm text-red-700 bg-red-50 border-b-2 border-red-200 dark:text-red-300 dark:bg-red-950 dark:border-red-800">

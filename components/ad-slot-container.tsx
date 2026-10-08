@@ -2,7 +2,7 @@
 "use client";
 
 import { AdSlot } from "@/lib/mock-ad-slots";
-import type { AuctionResult } from "@/app/api/auctions/route";
+// import type { AuctionResult } from "@/app/api/auctions/route";
 import Card from "./card";
 import AdSlotSkeleton from "./ad-slot-skeleton";
 

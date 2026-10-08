@@ -23,15 +23,6 @@ export const Home = async ({ searchParams }:
       </header >
       <LiveRefresh />
 
-      {/* {error && (
-        <div className="p-2 text-sm text-red-700 bg-red-50 border-b-2 border-red-200 dark:text-red-300 dark:bg-red-950 dark:border-red-800">
-          Last auction request failed: {error}.{" "}
-          {lastSuccessAt
-            ? `Last successful update: ${lastSuccessAt.toLocaleTimeString()}.`
-            : "No successful update yet."}
-        </div>
-      )} */}
-
       <main className="flex flex-col p-2 md:p-4 lg:p-6 gap-2 mx-auto w-full max-w-6xl">
         <TypeAhead limit={10} url="/api/search" />
         <StatusFilter current={filter} />

@@ -7,7 +7,7 @@ import AdSlotSkeleton from "@/components/ad-slot-skeleton";
 import { parseFilter } from "@/lib/filter";
 import StatusFilter from "@/components/status-filter";
 import RevenueTotal from "@/components/revenue-total";
-// const TIMEOUT_AUCTION = 5000; // 5 seconds
+import LiveRefresh from "@/components/live-refresh";
 
 export const Home = async ({ searchParams }:
   { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) => {
@@ -22,6 +22,7 @@ export const Home = async ({ searchParams }:
           <RevenueTotal />
         </Suspense>
       </header >
+      <LiveRefresh />
       {/* <TypeAhead limit={10} url="/api/search" /> */}
 
       {/* {error && (

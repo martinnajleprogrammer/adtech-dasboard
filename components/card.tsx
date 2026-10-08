@@ -1,7 +1,7 @@
 import { AdSlot } from "@/lib/mock-ad-slots";
 import type { HTMLAttributes } from "react";
 import Badge from "./badge";
-import { AuctionResult } from "@/lib/auctions";
+import type { AuctionResult } from "@/lib/auctions";
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   adSlot: AdSlot & AuctionResult;

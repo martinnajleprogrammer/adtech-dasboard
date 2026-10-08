@@ -1,4 +1,3 @@
-// import AdSlotContainer from "@/components/ad-slot-container";
 import { mockAdSlots } from "@/lib/mock-ad-slots";
 import TypeAhead from "@/components/typeahead";
 import { Suspense } from "react";

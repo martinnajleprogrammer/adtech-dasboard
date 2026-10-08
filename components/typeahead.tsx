@@ -1,3 +1,4 @@
+'use client';
 import type { TypeAheadState } from '../hooks/useTypeAhead';
 import useTypeAhead from '../hooks/useTypeAhead';
 

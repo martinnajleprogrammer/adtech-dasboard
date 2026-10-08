@@ -1,6 +1,6 @@
 // import AdSlotContainer from "@/components/ad-slot-container";
 import { mockAdSlots } from "@/lib/mock-ad-slots";
-// import TypeAhead from "@/components/typeahead";
+import TypeAhead from "@/components/typeahead";
 import { Suspense } from "react";
 import AdSlotCard from "@/components/ad-slot-card";
 import AdSlotSkeleton from "@/components/ad-slot-skeleton";
@@ -23,7 +23,6 @@ export const Home = async ({ searchParams }:
         </Suspense>
       </header >
       <LiveRefresh />
-      {/* <TypeAhead limit={10} url="/api/search" /> */}
 
       {/* {error && (
         <div className="p-2 text-sm text-red-700 bg-red-50 border-b-2 border-red-200 dark:text-red-300 dark:bg-red-950 dark:border-red-800">
@@ -35,6 +34,7 @@ export const Home = async ({ searchParams }:
       )} */}
 
       <main className="flex flex-col p-2 md:p-4 lg:p-6 gap-2 mx-auto w-full max-w-6xl">
+        <TypeAhead limit={10} url="/api/search" />
         <StatusFilter current={filter} />
         <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4 w-full">
           {

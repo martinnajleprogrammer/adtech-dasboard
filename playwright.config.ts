@@ -11,6 +11,7 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
+const PORT = 3100;
 export default defineConfig({
   testDir: './e2e',
   /* Run tests in files in parallel */
@@ -26,7 +27,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:3100',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -72,8 +73,12 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,
+    command: `npm run dev -- --port ${PORT}`,
+    url: 'http://localhost:3100',
+    reuseExistingServer: false,
+    env: {
+      E2E_FIXED_AUCTIONS: '1',
+      LIVE_REFRESH_MS: '0'
+    }
   },
 });

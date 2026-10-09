@@ -35,7 +35,8 @@ const TypeAhead = ({ limit, url }: { limit: number, url: string }) => {
   const showList = state.status === 'results' && isOpen;
 
   return <>
-    <div>SearchInput:
+    <div>
+      <label htmlFor='search'>Search tools:</label>
       <input
         id='search' type='text' onKeyDown={onKeyDown} role='combobox'
         aria-expanded={showList} aria-controls='suggestions'

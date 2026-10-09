@@ -17,7 +17,7 @@ export const Home = async ({ searchParams }:
     <>
       <header className="flex p-2 border-2 border-amber-500 dark:border-amber-700 justify-between items-center">
         <h1 className="text-2xl font-bold">AdTech Publisher Dashboard</h1>
-        <Suspense fallback={<span className="animate-pulse"> Revenue this round: -</span>}>
+        <Suspense fallback={<span className="animate-pulse">Revenue this round: - </span>}>
           <RevenueTotal />
         </Suspense>
       </header >

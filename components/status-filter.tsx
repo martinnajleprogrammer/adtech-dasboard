@@ -27,6 +27,6 @@ export default function StatusFilter({ current }: { current: FilterType }) {
           </option>
         ))
       }
-    </select >
+    </select>
   </>
 }

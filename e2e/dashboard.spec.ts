@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('Load initial', async ({ page }) => {
+test('Shows all six ad slots after streaming finishes', async ({ page }) => {
   // Navigate to the initial page
   await page.goto('/');
 

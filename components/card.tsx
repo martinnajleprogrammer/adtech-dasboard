@@ -12,7 +12,7 @@ const Card = ({ className, adSlot, ...props }: CardProps) => {
     adSlot.status === 'error' ? 'Error' : "No Fill";
   const badge = <Badge intent={adSlot.status} text={badgeText} />;
   return (
-    <div
+    <article
       className={`p-4 rounded-lg bg-amber-50 dark:bg-amber-950 border-2 border-amber-200 dark:border-amber-800 ${className || ""}`}
       {...props}
     >
@@ -21,7 +21,7 @@ const Card = ({ className, adSlot, ...props }: CardProps) => {
         {badge}
       </div>
       <p className=" text-gray-700  dark:text-gray-300"><span className="pr-2">Size:</span>{adSlot.size}</p>
-    </div>
+    </article>
   );
 };
 export default Card;

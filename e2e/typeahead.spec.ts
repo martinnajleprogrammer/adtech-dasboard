@@ -27,3 +27,4 @@ test('Typeahead functionality', async ({ page }) => {
   await expect(page.getByRole('listbox')).not.toBeVisible()
 
 });
+

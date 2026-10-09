@@ -8,10 +8,17 @@ import StatusFilter from "@/components/status-filter";
 import RevenueTotal from "@/components/revenue-total";
 import LiveRefresh from "@/components/live-refresh";
 
+const getLiveRefreshMs = (raw: string | undefined): number => {
+  if (typeof raw === 'undefined' || raw === '' || isNaN(Number(raw))) return 5000;
+  const n = Number(raw);
+  return n >= 0 ? n : 5000;
+}
+
 export const Home = async ({ searchParams }:
   { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) => {
 
   const filter = parseFilter((await searchParams).status);
+  const intervalMs = getLiveRefreshMs(process.env.LIVE_REFRESH_MS);
 
   return (
     <>
@@ -21,7 +28,7 @@ export const Home = async ({ searchParams }:
           <RevenueTotal />
         </Suspense>
       </header >
-      <LiveRefresh />
+      {intervalMs > 0 && <LiveRefresh intervalMs={intervalMs} />}
 
       <main className="flex flex-col p-2 md:p-4 lg:p-6 gap-2 mx-auto w-full max-w-6xl">
         <TypeAhead limit={10} url="/api/search" />

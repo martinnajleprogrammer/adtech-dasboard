@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-// TO DO, cards could be zero when all of them are nofill, no filter tested
+
 test('Filter functionality', async ({ page }) => {
   // Navigate to the page containing the filter component
   await page.goto('/');

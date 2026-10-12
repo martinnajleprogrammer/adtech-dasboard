@@ -1,31 +1,27 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixture';
 
-test('/api/search no results', async ({ page }) => {
-  
+test('/api/search no results', async ({ page, typeahead }) => {
+
   // Mock route
   await page.route(/\/api\/search/, async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({results:[], total: 0}),
+      body: JSON.stringify({ results: [], total: 0 }),
     });
   });
 
   await page.goto('/');
 
-  // Locate the typeahead input field
-  const typeaheadInput = page.getByRole('combobox', { name: 'Search tools' });
-
-  // Type into the input field
   const valueToFill = 'react';
-  await typeaheadInput.fill(valueToFill);
+  typeahead.search(valueToFill);
 
   await expect(page.getByText(`No results for ${valueToFill}.`)).toBeVisible();
   await expect(page.getByRole('listbox')).not.toBeVisible()
 
 });
 
-test('/api/search error 500', async ({ page }) => {
+test('/api/search error 500', async ({ page, typeahead }) => {
   // Mock route
   await page.route(/\/api\/search/, async (route) => {
     await route.fulfill({
@@ -38,8 +34,8 @@ test('/api/search error 500', async ({ page }) => {
   await page.goto('/');
 
   // Locate the typeahead input field
-  const typeaheadInput = page.getByRole('combobox', { name: 'Search tools' });
-  await typeaheadInput.fill('rea');
+  typeahead.search('rea');
+
 
   await expect(page.getByRole('alert')).toBeVisible()
 
@@ -47,7 +43,7 @@ test('/api/search error 500', async ({ page }) => {
   await expect(page.getByRole('listbox')).not.toBeVisible()
 });
 
-test('/api/search abort error', async ({ page }) => {
+test('/api/search abort error', async ({ page, typeahead }) => {
   // Mock route
   await page.route(/\/api\/search/, async (route) => {
     await route.abort();
@@ -56,14 +52,14 @@ test('/api/search abort error', async ({ page }) => {
   await page.goto('/');
 
   // Locate the typeahead input field
-  const typeaheadInput = page.getByRole('combobox', { name: 'Search tools' });
-  await typeaheadInput.fill('rea');
+  typeahead.search('rea');
+
 
   await expect(page.getByText('Error: Unknown error contacting /api/search')).toBeVisible();
 });
 
-test('/api/search slow rendering', async ({ page }) => {
-  
+test('/api/search slow rendering', async ({ page, typeahead }) => {
+
   let release!: () => void;
   const gate = new Promise<void>((resolve) => { release = resolve; });
 
@@ -80,8 +76,8 @@ test('/api/search slow rendering', async ({ page }) => {
   await page.goto('/');
 
   // Locate the typeahead input field
-  const typeaheadInput = page.getByRole('combobox', { name: 'Search tools' });
-  await typeaheadInput.fill('rea');
+  typeahead.search('rea');
+
 
   await expect(page.getByText('Searching...')).toBeVisible();
   await expect(page.getByRole('listbox')).not.toBeVisible()
@@ -96,7 +92,7 @@ test('/api/search slow rendering', async ({ page }) => {
 
 });
 
-test('/api/search search is modified during the previous call is being fetched', async ({ page }) => {
+test('/api/search search is modified during the previous call is being fetched', async ({ page, typeahead }) => {
 
   let release!: () => void;
   const gate = new Promise<void>((resolve) => { release = resolve; });
@@ -107,7 +103,7 @@ test('/api/search search is modified during the previous call is being fetched',
   // Mock route
   await page.route(/\/api\/search/, async (route) => {
     const q = new URL(route.request().url()).searchParams.get('q');
-    if (q === 'rea') { 
+    if (q === 'rea') {
       await gate; // stay waiting...
     }
     await route.fulfill({
@@ -124,18 +120,19 @@ test('/api/search search is modified during the previous call is being fetched',
   await page.goto('/');
 
   // Locate the typeahead input field
-  const typeaheadInput = page.getByRole('combobox', { name: 'Search tools' });
-  await typeaheadInput.fill('rea');
-  
+  typeahead.search('rea');
+
+
   await expect(page.getByText('Searching...')).toBeVisible();
 
-  await typeaheadInput.fill('reac');
+  typeahead.search('reac');
+
   await expect(page.getByRole('option', { name: 'new-one', exact: true })).toBeVisible();
   await expect(page.getByRole('option', { name: 'new-two', exact: true })).toBeVisible();
 
   release();
   await staleDone;
-  
+
   await expect(page.getByRole('option', { name: 'new-one', exact: true })).toBeVisible();
   await expect(page.getByRole('option', { name: 'new-two', exact: true })).toBeVisible();
 

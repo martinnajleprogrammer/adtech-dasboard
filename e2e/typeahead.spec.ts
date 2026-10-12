@@ -1,28 +1,25 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixture';
 
-test('Typeahead functionality', async ({ page }) => {
+test('Typeahead functionality', async ({ page, typeahead }) => {
   // Navigate to the page containing the typeahead component
   await page.goto('/');
 
   // Locate the typeahead input field
-  const typeaheadInput = page.getByRole('combobox', { name: 'Search tools'});
-
-  // Type into the input field
-  await typeaheadInput.fill('rea');
+  typeahead.search('rea'); 
 
   // Wait for the suggestions to appear
   const suggestions = page.getByRole('listbox');
   await expect(suggestions).toBeVisible();
 
   // Move the arrow to the first suggestion
-  await typeaheadInput.press('ArrowDown');
+  await typeahead.input.press('ArrowDown');
   
   await expect(page.getByRole('option').first()).toHaveAttribute('aria-selected', 'true');
-  await expect(typeaheadInput).toHaveAttribute('aria-activedescendant', 'item_0');
+  await expect(typeahead.input).toHaveAttribute('aria-activedescendant', 'item_0');
 
   // Press enter to select the first suggestion
-  await typeaheadInput.press('Enter');
-  await expect(typeaheadInput).toHaveValue('react'); 
+  await typeahead.input.press('Enter');
+  await expect(typeahead.input).toHaveValue('react'); 
 
   await expect(page.getByRole('listbox')).not.toBeVisible()
 

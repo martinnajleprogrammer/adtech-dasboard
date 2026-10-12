@@ -14,6 +14,6 @@ export const mockAdSlots: AdSlot[] = [
   { id: "slot-2", name: "Medium Rectangle", size: "300x250", status: "nofill", floorPrice: 5 },
   { id: "slot-3", name: "Large Rectangle", size: "336x280", status: "winning", floorPrice: 7 },
   { id: "slot-4", name: "Skyscraper", size: "160x600", status: "winning",  floorPrice: 6 },
-  { id: "slot-5", name: "hero", size: "160x600", status: "error", floorPrice: 4 },
-  { id: "slot-6", name: "footer", size: "160x600", status: "pending", floorPrice: 3 }
+  { id: "slot-5", name: "Hero", size: "160x600", status: "error", floorPrice: 4 },
+  { id: "slot-6", name: "Footer", size: "160x600", status: "pending", floorPrice: 3 }
 ];

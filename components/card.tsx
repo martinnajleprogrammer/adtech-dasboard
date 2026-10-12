@@ -20,7 +20,7 @@ const Card = ({ className, adSlot, ...props }: CardProps) => {
         <p className="font-semibold text-sm text-gray-500 dark:text-gray-400">{adSlot.name}</p>
         {badge}
       </div>
-      <p className=" text-gray-700  dark:text-gray-300"><span className="pr-2">Size:</span>{adSlot.size}</p>
+      <p className=" text-gray-700  dark:text-gray-300"><span className="pr-2"> Size:</span>{adSlot.size}</p>
     </article>
   );
 };

@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:e2e": "playwright test",
-    "tsc": "npx tsc --noEmit"
+    "type-check": "npx next typegen && npx tsc --noEmit"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

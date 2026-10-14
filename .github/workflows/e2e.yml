@@ -33,7 +33,7 @@ jobs:
 
       # Cheap checks first: fail fast before downloading browsers or building
       - name: Type check
-        run: npx tsc --noEmit
+        run: npm run type-check
 
       - name: Lint
         run: npm run lint

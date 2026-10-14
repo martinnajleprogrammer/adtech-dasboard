@@ -3,10 +3,10 @@ import useDebounce from "./useDebounce";
 
 const DELAY = 250;
 
-type TypeAheadResponse<T> = {
-  results: T[];
-  total: number;
-};
+// type TypeAheadResponse<T> = {
+//   results: T[];
+//   total: number;
+// };
 
 export type TypeAheadState<T> =
   | { status: 'idle' }

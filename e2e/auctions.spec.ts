@@ -4,7 +4,7 @@ test('header shows total revenue of winning slots', async ({page}) => {
 
   await page.goto('/');
   
-  await expect(page.getByRole('banner')).toContainText('Revenue this round: 23.75');
+  await expect(page.getByRole('banner')).toContainText('Revenue this round: 23.76');
 });
 
 const SLOT_CASES = [

@@ -36,3 +36,20 @@ test('dashboard with open suggestions has no WCAG A/AA violations', async ({ pag
   const results = await audit(page);
   expect(results.violations).toEqual([]);
 });
+
+test('revenue live region is mounted before the total streams in and is not remounted', async ({ page }) => {
+  // 'commit' returns as soon as the response starts, before the Suspense boundary resolves
+  await page.goto('/', { waitUntil: 'commit' });
+
+  const status = page.getByRole('banner').getByRole('status');
+
+  // Precondition: we are looking at the fallback. Otherwise the test would pass without proving anything.
+  await expect(status).toHaveText('Revenue this round: -');
+  const handle = await status.elementHandle();
+
+  await expect(status).toHaveText('Revenue this round: 23.75');
+
+  // Same DOM node as before the content streamed in: a screen reader only announces changes
+  // inside a live region that already existed, not one that was just created.
+  expect(await handle?.evaluate((el) => el.isConnected)).toBe(true);
+});

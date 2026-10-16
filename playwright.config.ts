@@ -12,7 +12,10 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 const PORT = 3100;
+const LIVE_PORT = 3101;
 const BASE_URL = `http://localhost:${PORT}`;
+const LIVE_URL = `http://localhost:${LIVE_PORT}`;
+
 const isCI = !!process.env.CI;
 export default defineConfig({
   testDir: './e2e',
@@ -44,6 +47,13 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      // Live-refresh specs need a server with auto-refresh enabled (see the second webServer)
+      testIgnore: '**/live/**',
+    },
+    {
+      name: 'chromium-live',
+      use: { ...devices['Desktop Chrome'], baseURL: LIVE_URL },
+      testMatch: '**/live/**/*.spec.ts',
     },
 
     // {
@@ -82,8 +92,14 @@ export default defineConfig({
    * Local: dev server (fast feedback). CI: production server (`next start`); the app is
    * built in a separate workflow step so a compile error shows up as "build failed".
    * To reproduce CI locally: `npm run build && CI=1 npm run test:e2e`.
+   *
+   * Two servers because LIVE_REFRESH_MS is a server env var: the main one disables auto-refresh
+   * (deterministic tests), the second one (:3101) keeps it on for the `chromium-live` project.
+   * The second one is always `next start`: a second `next dev` is blocked by Next's dev lock.
+   * Locally it builds first; in CI the build step already ran (rebuilding would overwrite `.next`
+   * under the server that is already running).
    */
-  webServer: {
+  webServer: [{
     command: isCI ? `npm run start -- --port ${PORT}` : `npm run dev -- --port ${PORT}`,
     url: BASE_URL,
     reuseExistingServer: false,
@@ -93,5 +109,17 @@ export default defineConfig({
       E2E_FIXED_AUCTIONS: '1',
       LIVE_REFRESH_MS: '0',
     },
-  },
+  }, {
+    command: isCI
+      ? `npm run start -- --port ${LIVE_PORT}`
+      : `npm run build && npm run start -- --port ${LIVE_PORT}`,
+    url: LIVE_URL,
+    reuseExistingServer: false,
+    timeout: 120_000,
+    env: {
+      // Server-side only, read at runtime (the page is dynamic: it reads searchParams)
+      E2E_FIXED_AUCTIONS: '1',
+      LIVE_REFRESH_MS: '5000',
+    },
+  }],
 });

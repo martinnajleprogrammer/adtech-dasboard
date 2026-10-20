@@ -14,7 +14,7 @@ test('/api/search no results', async ({ page, typeahead }) => {
   await page.goto('/');
 
   const valueToFill = 'react';
-  typeahead.search(valueToFill);
+  await typeahead.search(valueToFill);
 
   await expect(page.getByText(`No results for ${valueToFill}.`)).toBeVisible();
   await expect(page.getByRole('listbox')).not.toBeVisible()
@@ -34,7 +34,7 @@ test('/api/search error 500', async ({ page, typeahead }) => {
   await page.goto('/');
 
   // Locate the typeahead input field
-  typeahead.search('rea');
+  await typeahead.search('rea');
 
 
   await expect(page.getByRole('alert')).toBeVisible()
@@ -52,7 +52,7 @@ test('/api/search abort error', async ({ page, typeahead }) => {
   await page.goto('/');
 
   // Locate the typeahead input field
-  typeahead.search('rea');
+  await typeahead.search('rea');
 
 
   await expect(page.getByText('Error: Unknown error contacting /api/search')).toBeVisible();
@@ -76,7 +76,7 @@ test('/api/search slow rendering', async ({ page, typeahead }) => {
   await page.goto('/');
 
   // Locate the typeahead input field
-  typeahead.search('rea');
+  await typeahead.search('rea');
 
 
   await expect(page.getByText('Searching...')).toBeVisible();
@@ -120,12 +120,12 @@ test('/api/search search is modified during the previous call is being fetched',
   await page.goto('/');
 
   // Locate the typeahead input field
-  typeahead.search('rea');
+  await typeahead.search('rea');
 
 
   await expect(page.getByText('Searching...')).toBeVisible();
 
-  typeahead.search('reac');
+  await typeahead.search('reac');
 
   await expect(page.getByRole('option', { name: 'new-one', exact: true })).toBeVisible();
   await expect(page.getByRole('option', { name: 'new-two', exact: true })).toBeVisible();

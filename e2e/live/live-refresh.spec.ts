@@ -1,4 +1,5 @@
 import { test, expect, expectFocusRing } from '../fixture';
+
 // These specs run in the `chromium-live` project: its server has LIVE_REFRESH_MS=5000,
 // so the live refresh and its pause button are rendered.
 
@@ -19,7 +20,7 @@ test('Pause button toggles its label', async ({ page }) => {
   await expect(resume).toHaveCount(0);
 });
 
-test('Pausing stops the automatic refresh and resuming brings it back', async ({ page }) => {
+test('pausing stops the automatic refresh and resuming brings it back', async ({ page }) => {
   // router.refresh() fetches the RSC payload of the current route: that request is what we count
   const refreshes: string[] = [];
   page.on('request', (req) => {

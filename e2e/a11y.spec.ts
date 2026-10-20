@@ -69,4 +69,3 @@ test('keyboard focus is visible and follows the visual order', async ({ page, ty
   await page.keyboard.press('Tab');
   await expectFocusRing(page.getByLabel('Filter by status:'));
 });
-

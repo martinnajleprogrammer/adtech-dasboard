@@ -12,6 +12,14 @@ class TypeAhead {
     await this.input.fill(text);
   }
 }
+// Checks that the element has keyboard focus AND that the browser draws a focus indicator on it.
+// We assert the ring was not removed (e.g. by `outline-none`), not a browser-specific value.
+const expectFocusRing = async (locator: Locator) => {
+  await expect(locator).toBeFocused();
+  await expect(locator).not.toHaveCSS('outline-style', 'none');
+  await expect(locator).not.toHaveCSS('outline-width', '0px');
+};
+
 
 export const test = base.extend<{ typeahead: TypeAhead }>({
   typeahead: async ({ page }, use) => {
@@ -21,4 +29,4 @@ export const test = base.extend<{ typeahead: TypeAhead }>({
   },
 });
 
-export { expect };
+export { expect, expectFocusRing };

@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
-import type { Locator, Page } from '@playwright/test';
-import { test, expect } from './fixture';
+import type { Page } from '@playwright/test';
+import { test, expect, expectFocusRing } from './fixture';
 
 // Waits for the streamed content and any finite animation/transition (e.g. card fade-in).
 // Auditing mid-animation makes axe measure blended colors and report false contrast violations.
@@ -15,13 +15,6 @@ const waitForStableDom = async (page: Page) => {
 const audit = async (page: Page) =>
   new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
 
-// Checks that the element has keyboard focus AND that the browser draws a focus indicator on it.
-// We assert the ring was not removed (e.g. by `outline-none`), not a browser-specific value.
-const expectFocusRing = async (locator: Locator) => {
-  await expect(locator).toBeFocused();
-  await expect(locator).not.toHaveCSS('outline-style', 'none');
-  await expect(locator).not.toHaveCSS('outline-width', '0px');
-};
 
 test('dashboard has no WCAG A/AA violations', async ({ page }) => {
   await page.goto('/');
@@ -71,3 +64,4 @@ test('keyboard focus is visible and follows the visual order', async ({ page, ty
   await page.keyboard.press('Tab');
   await expectFocusRing(page.getByLabel('Filter by status:'));
 });
+

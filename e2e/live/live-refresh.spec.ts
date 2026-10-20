@@ -1,9 +1,8 @@
-import { test, expect } from '../fixture';
-
+import { test, expect, expectFocusRing } from '../fixture';
 // These specs run in the `chromium-live` project: its server has LIVE_REFRESH_MS=5000,
 // so the live refresh and its pause button are rendered.
 
-test('pause button toggles its label', async ({ page }) => {
+test('Pause button toggles its label', async ({ page }) => {
   await page.goto('/');
 
   const pause = page.getByRole('button', { name: 'Pause live updates' });
@@ -20,7 +19,7 @@ test('pause button toggles its label', async ({ page }) => {
   await expect(resume).toHaveCount(0);
 });
 
-test('pausing stops the automatic refresh and resuming brings it back', async ({ page }) => {
+test('Pausing stops the automatic refresh and resuming brings it back', async ({ page }) => {
   // router.refresh() fetches the RSC payload of the current route: that request is what we count
   const refreshes: string[] = [];
   page.on('request', (req) => {
@@ -63,4 +62,26 @@ test('pausing stops the automatic refresh and resuming brings it back', async ({
   await page.getByRole('button', { name: 'Resume live updates' }).click();
   await expect(page.getByRole('button', { name: 'Pause live updates' })).toBeVisible();
   await advanceUntilRefreshAfter(countWhenPaused);
+});
+
+test('Pause with keyboard navigation', async ({ page }) => {
+  await page.goto('/');
+
+  const pause = page.getByRole('button', { name: 'Pause live updates' });
+  const resume = page.getByRole('button', { name: 'Resume live updates' });
+
+  // The pause button comes first in the DOM, so the first Tab lands on it
+  await page.keyboard.press('Tab');
+  await expectFocusRing(pause);
+
+  await page.keyboard.press('Enter');
+  await expect(resume).toBeVisible();
+  await expect(pause).toHaveCount(0);
+  // Same node, only the label changed: keyboard focus must not be lost
+  await expectFocusRing(resume);
+
+  await page.keyboard.press('Space');
+  await expect(pause).toBeVisible();
+  await expect(resume).toHaveCount(0);
+  await expectFocusRing(pause);
 });

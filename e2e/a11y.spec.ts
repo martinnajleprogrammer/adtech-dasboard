@@ -15,28 +15,33 @@ const waitForStableDom = async (page: Page) => {
 const audit = async (page: Page) =>
   new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
 
+for (const colorScheme of ['light', 'dark'] as const) {
+  test.describe(`${colorScheme} mode`, () => {
+    test.use({ colorScheme });
 
-test('dashboard has no WCAG A/AA violations', async ({ page }) => {
-  await page.goto('/');
-  await waitForStableDom(page);
+    test('dashboard has no WCAG A/AA violations', async ({ page }) => {
+      await page.goto('/');
+      await waitForStableDom(page);
 
-  const results = await audit(page);
-  expect(results.violations).toEqual([]);
-});
+      const results = await audit(page);
+      expect(results.violations).toEqual([]);
+    });
 
-test('dashboard with open suggestions has no WCAG A/AA violations', async ({ page, typeahead }) => {
-  await page.goto('/');
+    test('dashboard with open suggestions has no WCAG A/AA violations', async ({ page, typeahead }) => {
+      await page.goto('/');
 
-  await typeahead.search('rea');
-  await expect(typeahead.listbox).toBeVisible();
-  await waitForStableDom(page);
+      await typeahead.search('rea');
+      await expect(typeahead.listbox).toBeVisible();
+      await waitForStableDom(page);
 
-  // The listbox must still be open, otherwise we would be auditing the closed state
-  await expect(typeahead.listbox).toBeVisible();
+      // The listbox must still be open, otherwise we would be auditing the closed state
+      await expect(typeahead.listbox).toBeVisible();
 
-  const results = await audit(page);
-  expect(results.violations).toEqual([]);
-});
+      const results = await audit(page);
+      expect(results.violations).toEqual([]);
+    });
+  });
+}
 
 test('revenue live region is mounted before the total streams in and is not remounted', async ({ page }) => {
   // 'commit' returns as soon as the response starts, before the Suspense boundary resolves

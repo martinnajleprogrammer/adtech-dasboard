@@ -7,6 +7,8 @@ import { parseFilter } from "@/lib/filter";
 import StatusFilter from "@/components/status-filter";
 import RevenueTotal from "@/components/revenue-total";
 import LiveRefresh from "@/components/live-refresh";
+import SlotErrorBoundary from "@/components/slot-error-boundary";
+import { getForcedFailSlot } from "@/lib/forced-failure";
 
 const getLiveRefreshMs = (raw: string | undefined): number => {
   if (typeof raw === 'undefined' || raw === '' || isNaN(Number(raw))) return 5000;
@@ -17,8 +19,10 @@ const getLiveRefreshMs = (raw: string | undefined): number => {
 export const Home = async ({ searchParams }:
   { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) => {
 
-  const filter = parseFilter((await searchParams).status);
+  const { status, e2eFail } = await searchParams;
+  const filter = parseFilter(status);
   const intervalMs = getLiveRefreshMs(process.env.LIVE_REFRESH_MS);
+  const failSlotId = getForcedFailSlot(e2eFail, process.env.E2E_FIXED_AUCTIONS);
 
   return (
     <>
@@ -39,12 +43,13 @@ export const Home = async ({ searchParams }:
           {
             mockAdSlots.map((adSlot) => {
               return (
-                <Suspense
-                  key={adSlot.id}
-                  fallback={<div className="@container"><AdSlotSkeleton /></div>}
-                >
-                  <AdSlotCard slotId={adSlot.id} filter={filter} />
-                </Suspense>
+                <SlotErrorBoundary key={adSlot.id} slotName={adSlot.name}>
+                  <Suspense
+                    fallback={<div className="@container"><AdSlotSkeleton /></div>}
+                  >
+                    <AdSlotCard slotId={adSlot.id} filter={filter} forceError={adSlot.id === failSlotId} />
+                  </Suspense>
+                </SlotErrorBoundary>
               );
             })
           }

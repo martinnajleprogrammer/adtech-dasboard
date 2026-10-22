@@ -17,3 +17,9 @@ export const mockAdSlots: AdSlot[] = [
   { id: "slot-5", name: "Hero", size: "160x600", status: "error", floorPrice: 4 },
   { id: "slot-6", name: "Footer", size: "160x600", status: "pending", floorPrice: 3 }
 ];
+
+export const getAdSlot = (id: string): AdSlot | undefined => { 
+ 
+  return mockAdSlots.find(slot => slot.id === id);
+  
+}

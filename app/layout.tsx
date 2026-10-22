@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Adtech Dashboard",
+  title: { default: "Adtech Dashboard", template: "%s · Adtech Dashboard" },
   description: "A dashboard for monitoring ad slots and revenue",
 };
 

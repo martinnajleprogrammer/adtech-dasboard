@@ -17,9 +17,10 @@ export default async function AdSlotCard({ slotId, filter, forceError }: { slotI
 
   const result = await getAuctionResult(slotId);
   if (filter !== 'all' && result.status !== filter) return null;
+  const query = filter === 'all' ? '' : `?status=${filter}`;
   return (
     <div className="@container opacity-100 transition-opacity duration-1000 starting:opacity-0">
-      <Card adSlot={{ ...anAdSlot, ...result }} />
+      <Card href={`/slots/${anAdSlot.id}${query}`} adSlot={{ ...anAdSlot, ...result }} />
     </div>
   );
 

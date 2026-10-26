@@ -26,7 +26,7 @@ export type AuctionResult =
   | (AuctionResultBase & { status: 'nofill' })
   | (AuctionResultBase & { status: 'winning'; bidId: string; cpm: number; currency: string });
 
-const AUCTION_ERROR_RATE = 0.05; // 5% chance the mock auction engine "crashes" for this slot
+export const AUCTION_ERROR_RATE = 0.05; // 5% chance the mock auction engine "crashes" for this slot
 
 
 

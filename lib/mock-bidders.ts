@@ -20,19 +20,23 @@ export const BIDDERS: Bidder[] = [
   { id: "bidder-4", name: "OpenX", code: "openx", isActive: false }, // inactivo: nunca participa
 ];
 
+// Winning results only carry the bidder id (bidId); fall back to it if unknown.
+export const getBidderName = (bidderId: string): string =>
+  BIDDERS.find((bidder) => bidder.id === bidderId)?.name ?? bidderId;
+
 export const AUCTION_TIMEOUT_MS = 1000;
 const MAX_TIME = 1500;
 const DEFAULT_PRICE = 14;
 const MIN_PRICE = 0.5;
 
-export function generateBidResponses(bidders: Bidder[] = BIDDERS): MockBidResponse[] {
+export function generateBidResponses(bidders: Bidder[] = BIDDERS, rng: () => number = Math.random): MockBidResponse[] {
   return bidders
     .filter((b) => b.isActive)
     .map((bidder) => ({
       bidderId: bidder.id,
-      cpm: Number((Math.random() * DEFAULT_PRICE + MIN_PRICE).toFixed(2)), // range $0.50–$15.00
+      cpm: Number((rng() * DEFAULT_PRICE + MIN_PRICE).toFixed(2)), // range $0.50–$15.00
       currency: "USD",
-      responseTime: Math.round(Math.random() * MAX_TIME), // 0–1500ms, timeout > 1500ms
+      responseTime: Math.round(rng() * MAX_TIME), // 0–1500ms, timeout > 1500ms
     }));
 }
 

@@ -1,6 +1,13 @@
 export const AD_SLOT_STATUSES = ["winning", "nofill", "pending", "error"] as const;
 export type AdSlotStatus = (typeof AD_SLOT_STATUSES)[number];
 
+export const STATUS_LABELS: Record<AdSlotStatus, string> = {
+  winning: "Winning",
+  nofill: "No Fill",
+  pending: "Pending",
+  error: "Error",
+};
+
 export type AdSlot = {
   id: string;
   name: string;

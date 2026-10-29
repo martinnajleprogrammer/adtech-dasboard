@@ -1,4 +1,4 @@
-import { getAdSlot } from "@/lib/mock-ad-slots";
+import { getAdSlot, STATUS_LABELS } from "@/lib/mock-ad-slots";
 import { notFound } from "next/navigation";
 import Badge from "@/components/badge";
 import type { Metadata } from "next";
@@ -6,22 +6,10 @@ import Link from "next/link";
 import { parseFilter } from "@/lib/filter";
 import { getSlotHistory } from "@/lib/history";
 import { getBidderName } from "@/lib/mock-bidders";
-import type { AdSlotStatus } from "@/lib/mock-ad-slots";
-
-const STATUS_LABELS: Record<AdSlotStatus, string> = {
-  winning: "Winning",
-  nofill: "No Fill",
-  pending: "Pending",
-  error: "Error",
-};
-
-// Empty cell: visible dash for sighted users, readable text for screen readers.
-const NoValue = () => (
-  <>
-    <span aria-hidden="true">—</span>
-    <span className="sr-only">Not available</span>
-  </>
-);
+import CurrentRound from "@/components/current-round";
+import NoValue from '@/components/no-value'
+import { Suspense } from "react";
+import CurrentRoundSkeleton from "@/components/current-round-skeleton";
 
 type SlotParams = { params: Promise<{ slotId: string }> };
 type SlotProps = SlotParams & { searchParams: Promise<{ status?: string | string[] }> };
@@ -55,12 +43,11 @@ export default async function SlotPage({ params, searchParams }: SlotProps) {
           <dd>{adSlot.size}</dd>
           <dt className="font-semibold">Floor price</dt>
           <dd>${adSlot.floorPrice.toFixed(2)}</dd>
-          <dt className="font-semibold">Status</dt>
-          <dd>
-            <Badge intent={adSlot.status} text={adSlot.status} />
-          </dd>
         </dl>
       </div>
+      <Suspense fallback={<CurrentRoundSkeleton />}>
+        <CurrentRound slotId={adSlot.id} />
+      </Suspense>
       <div
         role="region"
         aria-labelledby="history-caption"

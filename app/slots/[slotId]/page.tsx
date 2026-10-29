@@ -10,9 +10,11 @@ import CurrentRound from "@/components/current-round";
 import NoValue from '@/components/no-value'
 import { Suspense } from "react";
 import CurrentRoundSkeleton from "@/components/current-round-skeleton";
+import SlotErrorBoundary from "@/components/slot-error-boundary";
+import { getForcedFailSlot } from "@/lib/forced-failure";
 
 type SlotParams = { params: Promise<{ slotId: string }> };
-type SlotProps = SlotParams & { searchParams: Promise<{ status?: string | string[] }> };
+type SlotProps = SlotParams & { searchParams: Promise<{ status?: string | string[], e2eFail?: string | string[] }> };
 
 export const generateMetadata = async ({ params }: SlotParams): Promise<Metadata> => {
   const { slotId } = await params;
@@ -23,7 +25,8 @@ export const generateMetadata = async ({ params }: SlotParams): Promise<Metadata
 export default async function SlotPage({ params, searchParams }: SlotProps) {
   const { slotId } = await params;
 
-  const { status } = await searchParams;
+  const { status, e2eFail } = await searchParams;
+  const failSlotId = getForcedFailSlot(e2eFail, process.env.E2E_FIXED_AUCTIONS)
   const filter = parseFilter(status);
 
   const query = filter === 'all' ? '' : `?status=${filter}`;
@@ -45,9 +48,11 @@ export default async function SlotPage({ params, searchParams }: SlotProps) {
           <dd>${adSlot.floorPrice.toFixed(2)}</dd>
         </dl>
       </div>
-      <Suspense fallback={<CurrentRoundSkeleton />}>
-        <CurrentRound slotId={adSlot.id} />
-      </Suspense>
+      <SlotErrorBoundary slotName={adSlot.name}>
+        <Suspense fallback={<div className="mx-auto max-w-xl"><CurrentRoundSkeleton /></div>}>
+          <CurrentRound slotId={adSlot.id} forceError={adSlot.id === failSlotId} />
+        </Suspense>
+      </SlotErrorBoundary>
       <div
         role="region"
         aria-labelledby="history-caption"

@@ -4,7 +4,8 @@ import { getBidderName } from "@/lib/mock-bidders";
 import Badge from "@/components/badge";
 import NoValue from "@/components/no-value";
 
-const CurrentRound = async ({ slotId }: { slotId: string }) => {
+const CurrentRound = async ({ slotId, forceError }: { slotId: string, forceError: boolean }) => {
+  if (forceError) throw new Error('Failed Slot in current round.');
   const result = await getAuctionResult(slotId);
   const won = result.status === "winning";
 

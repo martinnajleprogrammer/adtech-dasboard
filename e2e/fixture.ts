@@ -38,6 +38,43 @@ class Dashboard {
     await this.waitForStreamed(expectedCards);
     await this.page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished)));
   }
+  cardLink(name: string) { 
+    return this.page.getByRole('link', { name, exact: true });
+  }
+}
+
+class SlotDetail {
+  readonly title: Locator;
+  readonly backLink: Locator;
+  readonly currentRound: Locator;
+  readonly skeleton: Locator;
+  readonly history: Locator;
+  readonly historyRows: Locator;
+  readonly errorAlert: Locator;
+  readonly retryButton: Locator;
+  readonly historyRegion: Locator;
+
+  constructor(private readonly page: Page) {
+    this.title = page.getByRole('heading', { level: 1 });
+    this.backLink = page.getByRole('link', { name: 'Back to dashboard' });
+    this.currentRound = page.getByRole('region', { name: 'Current round' });
+    this.skeleton = page.getByRole('status', { name: 'Loading current round' });
+    this.history = page.getByRole('table', { name: /history/i });
+    this.historyRows = this.history.getByRole('row').filter({ has: page.getByRole('rowheader') });
+    this.errorAlert = page.getByRole('alert').filter({ hasText: /error occurred/i });
+    this.retryButton = page.getByRole('button', { name: 'Retry' });
+    this.historyRegion = page.getByRole('region', { name: /history/i });
+  }
+  async waitForLoaded() {
+    await expect(this.skeleton).toHaveCount(0);
+    await expect(this.currentRound).toBeVisible();
+  }
+
+  async open(slotId: string, search = '') { 
+    return this.page.goto(`/slots/${slotId}${search}`, { waitUntil: 'commit' });
+     
+  }
+
 }
 
 
@@ -53,6 +90,7 @@ const expectFocusRing = async (locator: Locator) => {
 type Fixtures = {
   typeahead: TypeAhead;
   dashboard: Dashboard;
+  slotDetail: SlotDetail;
 };
 
 export const test = base.extend<Fixtures>({
@@ -70,6 +108,14 @@ export const test = base.extend<Fixtures>({
     const dashboard = new Dashboard(page);
 
     await use(dashboard);
+
+  },
+  
+  slotDetail: async ({ page }, use) => {
+
+    const slotDetail = new SlotDetail(page);
+
+    await use(slotDetail);
 
   },
 

@@ -30,6 +30,23 @@ for (const colorScheme of ['light', 'dark'] as const) {
       const results = await audit(page);
       expect(results.violations).toEqual([]);
     });
+
+    test('slot detail has no WCAG A/AA violations', async ({ page, slotDetail }) => {
+      await slotDetail.open('slot-1');
+      await slotDetail.waitForLoaded();
+      const results = await audit(page);
+      expect(results.violations).toEqual([]);
+
+
+    })
+    test('slot detail with a failed current round has no WCAG A/AA violations', async ({ page, slotDetail }) => {
+      await slotDetail.open('slot-1', '?e2eFail=slot-1');
+      
+      await expect(slotDetail.errorAlert).toBeVisible();
+      const results = await audit(page);
+      expect(results.violations).toEqual([]);
+
+    })
   });
 }
 
@@ -58,4 +75,36 @@ test('keyboard focus is visible and follows the visual order', async ({ page, ty
 
   await page.keyboard.press('Tab');
   await expectFocusRing(page.getByLabel('Filter by status:'));
+});
+
+test('a card shows its focus ring on the whole card and opens the slot with Enter', async ({ page, typeahead, dashboard }) => {
+  await page.goto('/');
+  await dashboard.waitForStreamed();
+
+  await page.keyboard.press('Tab');
+  await expectFocusRing(typeahead.input);
+
+  await page.keyboard.press('Tab');
+  await expectFocusRing(page.getByLabel('Filter by status:'));
+
+  await page.keyboard.press('Tab');
+
+  const card = dashboard.cards.filter({ has: dashboard.cardLink('Leaderboard') });
+  await expect(card).not.toHaveCSS('outline-style', 'none');
+  await expect(card).not.toHaveCSS('outline-width', '0px');
+
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL('/slots/slot-1');
+
+});
+
+test('focus order in the slot detail: back link, then the scrollable history', async ({ page, slotDetail }) => {
+  await slotDetail.open('slot-1');
+  await slotDetail.waitForLoaded();
+
+  await page.keyboard.press('Tab');
+  await expectFocusRing(slotDetail.backLink);
+
+  await page.keyboard.press('Tab');
+  await expectFocusRing(slotDetail.historyRegion);
 });

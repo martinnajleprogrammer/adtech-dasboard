@@ -55,6 +55,30 @@ e2e/unit/     specs for pure functions (seeded random, history); run in the same
 - **Stretched link for the whole card.** Only the slot name is a link (`after:absolute after:inset-0` makes the whole card clickable), so screen readers hear one link per card. The focus ring is drawn on the card with `has-focus-visible`.
 - **Tests use roles, not CSS.** E2E tests use role-based locators, a fixed-auctions mode (`E2E_FIXED_AUCTIONS=1`) and a failure hook (`?e2eFail=<slotId>`, only active in that mode). Each assertion was checked by breaking the code on purpose to see the test fail.
 
+## Optimizations
+
+All numbers are lab data (my machine, mobile emulation, production build with `npm run build && npm run start`, live refresh off unless noted). They are not field data from real users. Home values come from 3 runs. The slot detail and INP values come from a single run, so treat them as indicative.
+
+**Results**
+
+| Metric | Home | Slot detail |
+| --- | --- | --- |
+| Performance score | 100 | n/a |
+| FCP / LCP | 1.4 s / 1.4 s | n/a / 1.6 s |
+| TBT | 30 ms | 30 ms |
+| CLS | 0 | 0 |
+| INP (typeahead) | 40 ms, 30 ms with live refresh on | n/a |
+
+Method: Lighthouse CLI with `--throttling-method=devtools`. Chrome DevTools uses simulated throttling by default and gave different numbers (home FCP 0.8 to 1.1 s, LCP 2.0 to 2.3 s). On the detail page it reported a TBT of about 2.7 s, but the Performance panel showed only about 70 ms of main thread activity, and with applied throttling the TBT was 30 ms (one 81 ms task). I trust the applied numbers and don't compare values across methods.
+
+**What I changed, with before and after**
+
+- **Skeleton size on the home.** The card skeleton was 12 px shorter than the real card (100 vs 112 px, and 76 vs 84 px on wide containers), so every card that resolved pushed the ones below it down. I measured it with a `layout-shift` observer (shifts of 0.003 to 0.011) and matched each placeholder to the real line heights. An E2E test now compares skeleton and card size at three widths.
+- **Revenue total width.** The total was right-aligned and grew from `-` to `23.75`, moving its left edge 16 to 35 px. The number now has a fixed minimum width (`min-w-[6ch]` with `tabular-nums`). CLS in DevTools went from 0, 0.004 and 0.008 to 0, 0, 0. It is not covered by a test. A total of 100 or more would exceed the reserved width.
+- **Link prefetch.** With live refresh on, I counted 42 `_rsc` requests in 30 seconds: 6 refreshes and 36 prefetches of the card links, repeated after each `router.refresh()`. The detail page is dynamic and has no `loading.js`, so there was little to prefetch. With `prefetch={false}` on the cards it dropped to 6 requests (one every 5 seconds). The trade-off is that opening a detail page has no warm-up.
+
+**Cost of live refresh.** One request every 5 seconds, about 4.3 kB each, which is about 52 kB per minute. Each response takes about 1 s because it streams until the slowest auction finishes. TBT stays at 0 ms, INP at 30 ms and CLS at 0.001 during a 30 second recording while typing.
+
 ## Run it locally
 
 ```bash

@@ -21,7 +21,7 @@ const Card = ({ href, className, adSlot, ...props }: CardProps) => {
       >
         <div className="flex flex-col @sm:flex-row @sm:items-center @sm:justify-between gap-2">
           <h2 className="font-semibold text-sm text-gray-500 dark:text-gray-400">
-            <Link className="after:absolute after:inset-0 focus-visible:outline-none" href={href}>{adSlot.name}</Link>
+            <Link prefetch={false} className="after:absolute after:inset-0 focus-visible:outline-none" href={href}>{adSlot.name}</Link>
           </h2>
           {badge}
         </div>

@@ -7,7 +7,11 @@ const RevenueTotal = async () => {
 
   const totalRevenue = results.reduce((acc, result) => acc + (result.status === 'winning' ? result.cpm : 0), 0);
 
-  return <span>{`Revenue this round: ${totalRevenue.toFixed(2)}`}</span>;
+  return (
+    <span>
+      Revenue this round: <span className="inline-block min-w-[6ch] tabular-nums">{totalRevenue.toFixed(2)}</span>
+    </span>
+  );
 };
 
 export default RevenueTotal;
